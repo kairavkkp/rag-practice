@@ -1,0 +1,28 @@
+[
+    {
+        "id": 1,
+        "category": "exact_match",
+        "question": "What did I change in the ProductEnrichmentRole IAM policy?",
+        "expected_answer": "Added s3:GetObject on the enrichment bucket so the Lambda could read input files.",
+        "sources": [
+            "2024-11-12.md"
+        ]
+    },
+    {
+        "id": 2,
+        "category": "temporal",
+        "question": "What's the current sprint goal for ARCADE?",
+        "expected_answer": "Ship the bulk import API (set in the 2025-03-03 planning, replacing the earlier search revamp goal).",
+        "sources": [
+            "2025-03-03.md",
+            "2025-01-20.md"
+        ]
+    },
+    {
+        "id": 3,
+        "category": "unanswerable",
+        "question": "What's our Kubernetes cluster version?",
+        "expected_answer": "I don't know. The notes don't mention it.",
+        "sources": []
+    }
+]
