@@ -3,9 +3,10 @@
         "id": 1,
         "category": "exact_match",
         "question": "What was INVPLAT-1899?",
-        "expected_answer": "Add generation of the product hash in the Postgres DB, on Dev and Stg.",
+        "expected_answer": "Two notes use it: adding generation of the product hash in the Postgres DB on Dev and Stg (2023-02-17), and a code review of the line items export view on Lambda (2023-02-22).",
         "sources": [
-            "Work Notes/2023-02-17.md"
+            "Work Notes/2023-02-17.md",
+            "Work Notes/2023-02-22.md"
         ]
     },
     {
@@ -102,12 +103,12 @@
     {
         "id": 11,
         "category": "multi_day",
-        "question": "What did I work on with Dhruvi?",
-        "expected_answer": "Code reviews for Dhruvi, and a sync on S3, DynamoDB and Terraform module cleanup.",
+        "question": "How did the multi-stage deployment with Dhruvi go in December 2023?",
+        "expected_answer": "Synced with Dhruvi on multi-stage for Stg (2023-12-12), assisted Dhruvi with the multi-stage deployment on Prod (2023-12-13), then Docker multi-stage optimizations on Elastic Beanstalk (2023-12-14).",
         "sources": [
-            "Work Notes/2023-01-12.md",
-            "Work Notes/2023-04-03.md",
-            "Work Notes/2023-12-07.md"
+            "Work Notes/2023-12-12.md",
+            "Work Notes/2023-12-13.md",
+            "Work Notes/2023-12-14.md"
         ]
     },
     {

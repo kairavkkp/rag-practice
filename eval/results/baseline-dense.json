@@ -165,13 +165,13 @@
     "answerable": true,
     "hit": false,
     "recall": 0.0,
-    "rank": 9,
-    "top_score": 0.6543086767196655,
+    "rank": null,
+    "top_score": 0.669292688369751,
     "top_files": [
-      "Work Notes/2023-03-03.md",
+      "Work Notes/2023-07-17.md",
+      "Work Notes/2023-05-03.md",
       "Work Notes/2023-08-28.md",
-      "Work Notes/2023-05-24.md",
-      "Work Notes/2023-03-27.md",
+      "Work Notes/2023-02-15.md",
       "Work Notes/2023-04-17.md"
     ]
   },

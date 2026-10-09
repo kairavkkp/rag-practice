@@ -14,6 +14,8 @@ work notes exported from Apple Notes. The goal is to understand every stage, not
   bullet points). No diff needed.
 - Keep explanations short and concrete. Run code to check claims where possible.
 - Measure before improving: every new pipeline layer is judged against `eval/questions.json`.
+- **Optimise for understanding, not eval score.** One technique per small change: explain the
+  idea, show which questions moved and why (including failures), then move on. Don't over-tune.
 
 ## Environment
 
