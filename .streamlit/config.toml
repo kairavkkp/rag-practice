@@ -1,0 +1,7 @@
+# The app shows private work notes: keep it on this machine and send no telemetry.
+[server]
+address = "localhost"
+headless = true
+
+[browser]
+gatherUsageStats = false

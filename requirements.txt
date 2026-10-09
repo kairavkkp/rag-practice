@@ -1,0 +1,10 @@
+# Pinned to the versions this project was built and evaluated with.
+# Install: python -m venv venv && source venv/bin/activate && pip install -r requirements.txt
+# Also needed outside pip: Ollama with `ollama pull qwen3.5:9b`.
+
+numpy==2.5.3
+sentence-transformers==6.1.0   # bge-small embeddings + bge-reranker cross-encoder
+transformers==5.19.0           # bge tokenizer for token-based chunking
+torch==2.14.1
+streamlit==1.65.0              # app.py
+tqdm==4.70.1                   # optional: progress bar in the exporter

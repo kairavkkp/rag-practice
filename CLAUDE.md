@@ -40,6 +40,10 @@ src/embed.py                   chunks.jsonl -> embeddings.npy
 src/bm25.py                    BM25Index: hand-written BM25 over raw text + header
 src/search.py                  DenseIndex, HybridIndex (RRF), RerankIndex (cross-encoder)
 src/answer.py                  rerank -> whole notes -> Ollama answer with [n] citations
+                               (--folder to filter; logs to data/logs/queries.jsonl)
+app.py                         Streamlit UI: streamlit run app.py -> http://localhost:8501
+.streamlit/config.toml         localhost only, no usage telemetry (private notes)
+requirements.txt               pinned Python deps (plus Ollama + qwen3.5:9b outside pip)
 eval/questions.json            15 test questions
 eval/run_eval.py               retrieval eval: hit@5, recall@5, rank (--name <run>)
 eval/results/<run>.json        saved eval runs (ids and scores only)
@@ -138,11 +142,23 @@ Retrieval is the hard part; tune every stage separately.
      hits. Learned: IDF is collection-relative (query stopwords needed); no stemming.
    - [x] reranking: hybrid top 20 -> `BAAI/bge-reranker-base` -> best 5. **13/13, recall
      0.92**, every first hit at rank 1. Reranker scores still can't flag unanswerable.
-   - citation / "I don't know" prompt (unanswerable questions)
-   - date awareness, prefer newest (facts that changed)
-   - query rewrite, HyDE, multi-query (paraphrased questions)
-   - metadata filter by folder
-   - logging every query, retrieval and answer to JSONL
-   - router and compression last (likely unnecessary at this size)
+   - [x] citation / "I don't know" prompt: 4/4 spot check (2 unanswerable refused, 2
+     answerable answered with citations). Not yet run over all 15 questions.
+   - [x] metadata filter by folder: `folder=` on every index, `--folder` in answer.py.
+     Applied before ranking, so top-k all come from that folder.
+   - [x] logging: every answer() call appends to `data/logs/queries.jsonl` (question, folder,
+     retrieved chunk ids + scores, sources, answer, seconds per stage, model).
+   - [ ] TODO date awareness, prefer newest (facts that changed). Decide how recency trades
+     off against relevance: boost newer notes, or sort context by date for "status/latest".
+   - [ ] TODO query rewrite, HyDE, multi-query (paraphrased questions). Each costs an LLM
+     call (~5-15 s with qwen), so measure the gain against the latency.
+   - [ ] TODO answer-level eval: score answers against `expected_answer` (by hand first,
+     then an LLM judge). Known case: #13 answered "Summar and JDF - Parikh" from an ambiguous
+     note line; retrieval was right, the reading was wrong.
+   - [ ] TODO BM25 leftovers: a simple stemmer (names/name), and measure doc length on
+     `embed_text` so UUID noise doesn't count as length.
+   - [ ] TODO router and compression last (likely unnecessary at this size).
+7. [x] Streamlit UI (`app.py`): pick retrieval mode and folder, retrieval-only toggle, answer
+   with timings, sources given to the LLM, and retrieved chunks (raw vs embed_text).
 
 Update the checkboxes in this file as stages are completed.

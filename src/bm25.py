@@ -47,6 +47,7 @@ class BM25Index:
         self.chunks = load_chunks()
         # Index the header too, so dates, folder and title are searchable
         docs = [tokenize(f"{context_header(c)}\n{c['text']}") for c in self.chunks]
+        self.folders = np.array([c["folder"] for c in self.chunks])
         self.doc_len = np.array([len(d) for d in docs], dtype=np.float32)
         self.avg_len = float(self.doc_len.mean())
         n = len(docs)
@@ -63,13 +64,16 @@ class BM25Index:
             for term, p in self.postings.items()
         }
 
-    def search(self, query, k=5):
-        """Return the top-k chunks as [(score, chunk)], best first."""
+    def search(self, query, k=5, folder=None):
+        """Return the top-k chunks as [(score, chunk)], best first.
+        folder: only rank chunks from this folder (a metadata filter)."""
         scores = np.zeros(len(self.chunks), dtype=np.float32)
         for term in set(tokenize(query)) - STOPWORDS:
             for i, tf in self.postings.get(term, []):
                 length_norm = 1 - B + B * self.doc_len[i] / self.avg_len
                 scores[i] += self.idf[term] * tf * (K1 + 1) / (tf + K1 * length_norm)
+        if folder:
+            scores[self.folders != folder] = 0  # zero scores are dropped below
         top = np.argsort(-scores)[:k]
         return [(float(scores[i]), self.chunks[i]) for i in top if scores[i] > 0]
 

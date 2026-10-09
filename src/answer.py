@@ -1,17 +1,22 @@
 """Answer a question from the notes with a local LLM (Ollama), citing sources.
 
     python src/answer.py "What's the status of PPD-1294?"
+    python src/answer.py "What did I fix in the audit lambda?" --folder "Lighthouz AI"
 
 Embed small, return big: retrieve chunks, then give the LLM each matched note in full.
 """
 
+import argparse
 import json
-import sys
+import time
 import urllib.request
+from datetime import datetime
+from pathlib import Path
 
 from build_chunks import NOTES_DIR, context_header, load_note
 from search import RerankIndex
 
+LOG = Path("data/logs/queries.jsonl")
 OLLAMA_URL = "http://localhost:11434/api/chat"
 LLM = "qwen3.5:9b"
 K = 5  # chunks to retrieve; their notes become the context
@@ -53,14 +58,42 @@ def ask_llm(question, context):
         return json.loads(resp.read())["message"]["content"]
 
 
-def answer(question, index):
-    sources, context = build_context(index.search(question, k=K))
-    return ask_llm(question, context), sources
+def log(entry):
+    """One JSON line per question. Lives under data/ (git-ignored): it holds note content."""
+    LOG.parent.mkdir(parents=True, exist_ok=True)
+    with open(LOG, "a", encoding="utf-8") as f:
+        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+
+def answer(question, index, folder=None):
+    """Retrieve, build the context, ask the LLM, log it. Returns the log entry."""
+    t0 = time.perf_counter()
+    results = index.search(question, k=K, folder=folder)
+    t1 = time.perf_counter()
+    sources, context = build_context(results)
+    text = ask_llm(question, context)
+    t2 = time.perf_counter()
+    entry = {
+        "time": datetime.now().isoformat(timespec="seconds"),
+        "question": question,
+        "folder": folder,
+        "retrieved": [{"chunk_id": c["chunk_id"], "score": round(s, 4)} for s, c in results],
+        "sources": [n["file"] for n in sources],
+        "answer": text,
+        "seconds": {"retrieve": round(t1 - t0, 2), "llm": round(t2 - t1, 2)},
+        "model": LLM,
+    }
+    log(entry)
+    return entry
 
 
 if __name__ == "__main__":
-    question = " ".join(sys.argv[1:])
-    text, sources = answer(question, RerankIndex())
-    print(text + "\n")
-    for i, n in enumerate(sources, 1):
-        print(f"[{i}] {n['file']}")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("question", nargs="+")
+    ap.add_argument("--folder", help='only search one folder, e.g. "Work Notes"')
+    args = ap.parse_args()
+    result = answer(" ".join(args.question), RerankIndex(), args.folder)
+    print(result["answer"] + "\n")
+    for i, f in enumerate(result["sources"], 1):
+        print(f"[{i}] {f}")
+    print(f"\n{result['seconds']}")

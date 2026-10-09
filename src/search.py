@@ -26,13 +26,17 @@ class DenseIndex:
         self.chunks = load_chunks()
         self.vectors = normalize(np.load(EMBEDDINGS))
         assert len(self.vectors) == len(self.chunks), "re-run embed.py after build_chunks.py"
+        self.folders = np.array([c["folder"] for c in self.chunks])
         self.model = SentenceTransformer(MODEL)
 
-    def search(self, query, k=5):
-        """Return the top-k chunks as [(score, chunk)], best first."""
+    def search(self, query, k=5, folder=None):
+        """Return the top-k chunks as [(score, chunk)], best first.
+        folder: only rank chunks from this folder (a metadata filter)."""
         q = normalize(self.model.encode(QUERY_PREFIX + query))
         scores = self.vectors @ q  # cosine similarity with every chunk at once
-        top = np.argsort(-scores)[:k]
+        if folder:
+            scores = np.where(self.folders == folder, scores, -np.inf)
+        top = [i for i in np.argsort(-scores)[:k] if np.isfinite(scores[i])]
         return [(float(scores[i]), self.chunks[i]) for i in top]
 
 
@@ -49,9 +53,13 @@ class HybridIndex:
 
         self.dense, self.bm25 = DenseIndex(), BM25Index()
 
-    def search(self, query, k=5):
+    def search(self, query, k=5, folder=None):
         scores, chunks = {}, {}
-        for results in (self.dense.search(query, self.DEPTH), self.bm25.search(query, self.DEPTH)):
+        lists = (
+            self.dense.search(query, self.DEPTH, folder),
+            self.bm25.search(query, self.DEPTH, folder),
+        )
+        for results in lists:
             for rank, (_, chunk) in enumerate(results, 1):
                 cid = chunk["chunk_id"]
                 scores[cid] = scores.get(cid, 0) + 1 / (self.RRF_K + rank)
@@ -78,8 +86,10 @@ class RerankIndex:
         self.model = CrossEncoder(self.RERANKER)
         self.header = context_header
 
-    def search(self, query, k=5):
-        candidates = [c for _, c in self.hybrid.search(query, self.CANDIDATES)]
+    def search(self, query, k=5, folder=None):
+        candidates = [c for _, c in self.hybrid.search(query, self.CANDIDATES, folder)]
+        if not candidates:
+            return []
         # The cleaned text plus header, like the embedder sees (and it fits in 512 tokens)
         pairs = [(query, f"{self.header(c)}\n{c['embed_text']}") for c in candidates]
         scores = self.model.predict(pairs)
