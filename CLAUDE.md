@@ -10,9 +10,8 @@ work notes exported from Apple Notes. The goal is to understand every stage, not
 - **No RAG frameworks.** No LangChain, LlamaIndex, Haystack or vector DB clients. Plain Python and
   NumPy, plus the embedding model and the LLM. I implement cosine similarity, BM25, rank fusion,
   reranking, etc. myself.
-- **Every time you change a file, give me:**
-  1. a git-log-style entry (conventional commit subject + bullet points), and
-  2. the unified diff of the change (`diff -u` style).
+- **Every time you change a file, give me** a git-log-style entry (conventional commit subject +
+  bullet points). No diff needed.
 - Keep explanations short and concrete. Run code to check claims where possible.
 - Measure before improving: every new pipeline layer is judged against `eval/questions.json`.
 
