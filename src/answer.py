@@ -10,7 +10,7 @@ import sys
 import urllib.request
 
 from build_chunks import NOTES_DIR, context_header, load_note
-from search import DenseIndex
+from search import RerankIndex
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
 LLM = "qwen3.5:9b"
@@ -60,7 +60,7 @@ def answer(question, index):
 
 if __name__ == "__main__":
     question = " ".join(sys.argv[1:])
-    text, sources = answer(question, DenseIndex())
+    text, sources = answer(question, RerankIndex())
     print(text + "\n")
     for i, n in enumerate(sources, 1):
         print(f"[{i}] {n['file']}")

@@ -1,6 +1,6 @@
 """Retrieval eval over eval/questions.json.
 
-    python eval/run_eval.py --name baseline-dense
+    python eval/run_eval.py --mode hybrid --name hybrid-rrf
 
 Metrics, per answerable question (sources are note files, so a chunk hit = its file):
   hit@5     an expected source is in the top 5
@@ -18,7 +18,10 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
-from search import DenseIndex  # noqa: E402
+from bm25 import BM25Index  # noqa: E402
+from search import DenseIndex, HybridIndex, RerankIndex  # noqa: E402
+
+MODES = {"dense": DenseIndex, "bm25": BM25Index, "hybrid": HybridIndex, "rerank": RerankIndex}
 
 QUESTIONS = Path("eval/questions.json")
 RESULTS = Path("eval/results")
@@ -37,10 +40,11 @@ def unique_files(results):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--name", default="latest")
+    ap.add_argument("--mode", choices=MODES, default="hybrid")
     args = ap.parse_args()
 
     questions = json.loads(QUESTIONS.read_text())
-    index = DenseIndex()
+    index = MODES[args.mode]()
     rows = []
     for q in questions:
         results = index.search(q["question"], k=DEPTH)
@@ -55,7 +59,7 @@ def main():
                 "hit": rank is not None and rank <= K,
                 "recall": len(sources & set(files[:K])) / len(sources) if sources else None,
                 "rank": rank,
-                "top_score": results[0][0],
+                "top_score": results[0][0] if results else 0.0,
                 "top_files": files[:K],
             }
         )

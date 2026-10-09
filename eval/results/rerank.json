@@ -1,0 +1,242 @@
+[
+  {
+    "id": 1,
+    "category": "exact_match",
+    "answerable": true,
+    "hit": true,
+    "recall": 1.0,
+    "rank": 1,
+    "top_score": 0.3049323856830597,
+    "top_files": [
+      "Work Notes/2023-02-17.md",
+      "Work Notes/2023-02-22.md",
+      "Work Notes/2023-05-09.md",
+      "Work Notes/2023-06-29.md",
+      "Work Notes/2023-08-04.md"
+    ]
+  },
+  {
+    "id": 2,
+    "category": "exact_match",
+    "answerable": true,
+    "hit": true,
+    "recall": 1.0,
+    "rank": 1,
+    "top_score": 0.9841368198394775,
+    "top_files": [
+      "Work Notes/2024-06-05.md",
+      "Work Notes/2024-05-06.md",
+      "Work Notes/2024-05-20.md",
+      "Work Notes/2024-05-22.md",
+      "Work Notes/2024-05-21.md"
+    ]
+  },
+  {
+    "id": 3,
+    "category": "exact_match",
+    "answerable": true,
+    "hit": true,
+    "recall": 1.0,
+    "rank": 1,
+    "top_score": 0.996397078037262,
+    "top_files": [
+      "Work Notes/2023-02-17.md",
+      "Work Notes/2023-01-17.md",
+      "Work Notes/2024-01-17.md",
+      "Work Notes/2023-03-02.md",
+      "Work Notes/2023-04-17.md"
+    ]
+  },
+  {
+    "id": 4,
+    "category": "paraphrase",
+    "answerable": true,
+    "hit": true,
+    "recall": 1.0,
+    "rank": 1,
+    "top_score": 0.9974476099014282,
+    "top_files": [
+      "Lighthouz AI/2025-08-10.md",
+      "Lighthouz AI/2025-08-04.md",
+      "Lighthouz AI/2025-05-28.md",
+      "Lighthouz AI/2026-02-26.md",
+      "Lighthouz AI/2025-08-09.md"
+    ]
+  },
+  {
+    "id": 5,
+    "category": "paraphrase",
+    "answerable": true,
+    "hit": true,
+    "recall": 1.0,
+    "rank": 1,
+    "top_score": 0.024718957021832466,
+    "top_files": [
+      "Lighthouz AI/2025-08-10.md",
+      "Lighthouz AI/2025-08-04.md",
+      "Lighthouz AI/2025-12-09.md",
+      "Lighthouz AI/2025-08-01.md",
+      "Lighthouz AI/2025-08-05.md"
+    ]
+  },
+  {
+    "id": 6,
+    "category": "paraphrase",
+    "answerable": true,
+    "hit": true,
+    "recall": 1.0,
+    "rank": 1,
+    "top_score": 0.06437773257493973,
+    "top_files": [
+      "Lighthouz AI/2025-04-10_g2.md",
+      "Lighthouz AI/2025-08-07.md",
+      "Lighthouz AI/2025-04-30_2025-04-30-todos.md",
+      "Lighthouz AI/2025-05-21.md",
+      "Lighthouz AI/2025-05-14.md"
+    ]
+  },
+  {
+    "id": 7,
+    "category": "paraphrase",
+    "answerable": true,
+    "hit": true,
+    "recall": 1.0,
+    "rank": 1,
+    "top_score": 0.4108486771583557,
+    "top_files": [
+      "Lighthouz AI/2025-09-29.md",
+      "Lighthouz AI/2025-10-16.md",
+      "Lighthouz AI/2025-11-26.md",
+      "Lighthouz AI/2025-12-31.md",
+      "Lighthouz AI/2025-12-30.md"
+    ]
+  },
+  {
+    "id": 8,
+    "category": "temporal",
+    "answerable": true,
+    "hit": true,
+    "recall": 1.0,
+    "rank": 1,
+    "top_score": 0.03911811485886574,
+    "top_files": [
+      "Work Notes/2023-12-07.md",
+      "Work Notes/2023-12-08.md",
+      "Work Notes/2023-12-11.md",
+      "Work Notes/2024-06-05.md",
+      "Work Notes/2024-01-17.md"
+    ]
+  },
+  {
+    "id": 9,
+    "category": "temporal",
+    "answerable": true,
+    "hit": true,
+    "recall": 1.0,
+    "rank": 1,
+    "top_score": 0.6934148073196411,
+    "top_files": [
+      "Work Notes/2024-08-14.md",
+      "Work Notes/2024-08-16.md",
+      "Work Notes/2024-08-13.md",
+      "Work Notes/2024-08-26.md",
+      "Work Notes/2024-08-22.md"
+    ]
+  },
+  {
+    "id": 10,
+    "category": "multi_day",
+    "answerable": true,
+    "hit": true,
+    "recall": 0.8,
+    "rank": 1,
+    "top_score": 0.5322678685188293,
+    "top_files": [
+      "Lighthouz AI/2025-11-24.md",
+      "Lighthouz AI/2025-11-17.md",
+      "Lighthouz AI/2025-09-18.md",
+      "Lighthouz AI/2025-11-25.md",
+      "Lighthouz AI/2025-11-27.md"
+    ]
+  },
+  {
+    "id": 11,
+    "category": "multi_day",
+    "answerable": true,
+    "hit": true,
+    "recall": 0.6666666666666666,
+    "rank": 1,
+    "top_score": 0.6414114236831665,
+    "top_files": [
+      "Work Notes/2023-12-13.md",
+      "Work Notes/2023-12-12.md",
+      "Work Notes/2023-07-17.md",
+      "Work Notes/2023-07-14.md",
+      "Work Notes/2023-01-13.md"
+    ]
+  },
+  {
+    "id": 12,
+    "category": "multi_day",
+    "answerable": true,
+    "hit": true,
+    "recall": 0.5,
+    "rank": 1,
+    "top_score": 0.015041857957839966,
+    "top_files": [
+      "Lighthouz AI/2025-08-25.md",
+      "Work Notes/2024-08-19.md",
+      "Work Notes/2024-01-26.md",
+      "Work Notes/2024-03-15.md",
+      "Lighthouz AI/2025-03-10_check-bol-completeness.md"
+    ]
+  },
+  {
+    "id": 13,
+    "category": "folder",
+    "answerable": true,
+    "hit": true,
+    "recall": 1.0,
+    "rank": 1,
+    "top_score": 0.9143148064613342,
+    "top_files": [
+      "Lighthouz AI/2025-11-17.md",
+      "Lighthouz AI/2025-11-27.md",
+      "Lighthouz AI/2026-03-27_things-accomplished.md",
+      "Lighthouz AI/2025-11-07.md",
+      "Lighthouz AI/2025-06-16_split-pseudo-code.md"
+    ]
+  },
+  {
+    "id": 14,
+    "category": "unanswerable",
+    "answerable": false,
+    "hit": false,
+    "recall": null,
+    "rank": null,
+    "top_score": 0.026404403150081635,
+    "top_files": [
+      "Work Notes/2024-01-29.md",
+      "Lighthouz AI/2025-03-10_check-bol-completeness.md",
+      "Lighthouz AI/2025-08-25.md",
+      "Lighthouz AI/2025-05-20.md",
+      "Lighthouz AI/2025-10-01.md"
+    ]
+  },
+  {
+    "id": 15,
+    "category": "unanswerable",
+    "answerable": false,
+    "hit": false,
+    "recall": null,
+    "rank": null,
+    "top_score": 6.112187838880345e-05,
+    "top_files": [
+      "Lighthouz AI/2025-05-28.md",
+      "Lighthouz AI/2025-04-16.md",
+      "Work Notes/2023-07-28.md",
+      "Work Notes/2023-01-19.md",
+      "Work Notes/2023-06-27.md"
+    ]
+  }
+]

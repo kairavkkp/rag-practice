@@ -37,8 +37,9 @@ data/                          git-ignored
   index/embeddings.npy         one vector per chunk, same order as chunks.jsonl
 src/build_chunks.py            loader + noise cleaner + token-based chunker
 src/embed.py                   chunks.jsonl -> embeddings.npy
-src/search.py                  DenseIndex: cosine top-k (python src/search.py "query")
-src/answer.py                  retrieve -> whole notes -> Ollama answer with [n] citations
+src/bm25.py                    BM25Index: hand-written BM25 over raw text + header
+src/search.py                  DenseIndex, HybridIndex (RRF), RerankIndex (cross-encoder)
+src/answer.py                  rerank -> whole notes -> Ollama answer with [n] citations
 eval/questions.json            15 test questions
 eval/run_eval.py               retrieval eval: hit@5, recall@5, rank (--name <run>)
 eval/results/<run>.json        saved eval runs (ids and scores only)
@@ -132,11 +133,14 @@ Retrieval is the hard part; tune every stage separately.
    (#11), one paraphrase (#5, rank 14). Unanswerable top scores (max 0.642) overlap answerable
    hits (min 0.621), so a score threshold can't detect "no answer".
 6. [ ] Add one layer at a time, re-running the eval after each:
-   - BM25 keyword search + reciprocal rank fusion (exact IDs and names)
+   - [x] BM25 keyword search + reciprocal rank fusion (exact IDs and names).
+     bm25 11/13 (recall 0.76), hybrid RRF 10/13 (0.63): fusion lets dense drag down exact-ID
+     hits. Learned: IDF is collection-relative (query stopwords needed); no stemming.
+   - [x] reranking: hybrid top 20 -> `BAAI/bge-reranker-base` -> best 5. **13/13, recall
+     0.92**, every first hit at rank 1. Reranker scores still can't flag unanswerable.
    - citation / "I don't know" prompt (unanswerable questions)
    - date awareness, prefer newest (facts that changed)
    - query rewrite, HyDE, multi-query (paraphrased questions)
-   - reranking: retrieve 20, keep best 5
    - metadata filter by folder
    - logging every query, retrieval and answer to JSONL
    - router and compression last (likely unnecessary at this size)
