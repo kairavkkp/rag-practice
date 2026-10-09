@@ -7,9 +7,31 @@ MAX_WORDS = 250  # adjust after looking at your stats
 
 
 def load_note(path):
-    """Return {"file", "date", "title", "body"}.
+    """Return {"file", "folder", "date", "title", "body"}.
     The file is: '---', header lines like 'date: 2024-03-18', '---', then the body.
-    Hint: text.split("---", 2) gives you ['', header, body]."""
+    "file" is "<folder>/<filename>", since filenames repeat across folders."""
+    with open(path, "r", encoding="utf-8") as f:
+        text = f.read()
+    # Split on whole '---' lines, so a title containing '---' can't break it
+    if not text.startswith("---\n") or "\n---\n" not in text:
+        raise ValueError(
+            f"File {path} does not have the expected format with '---' separators."
+        )
+    header, body = text[len("---\n") :].split("\n---\n", 1)
+
+    meta = {}
+    for line in header.splitlines():
+        key, _, value = line.partition(":")  # values like 'created' contain colons
+        meta[key.strip()] = value.strip()
+    folder = json.loads(meta["folder"])  # title and folder are JSON-quoted
+
+    return {
+        "file": f"{folder}/{path.name}",
+        "folder": folder,
+        "date": meta["date"],
+        "title": json.loads(meta["title"]),
+        "body": body.strip(),
+    }
 
 
 def split_blocks(body):
@@ -25,8 +47,9 @@ def chunk_note(note):
 def main():
     # for each note: load -> split into blocks -> chunk
     # write one JSON line per chunk to OUT:
-    # {"chunk_id": "2024-03-18.md#0", "file": "2024-03-18.md",
-    #  "date": "2024-03-18", "position": 0, "text": "..."}
+    # {"chunk_id": "Work Notes/2024-03-18.md#0", "file": "Work Notes/2024-03-18.md",
+    #  "folder": "Work Notes", "title": "2024-03-18", "date": "2024-03-18",
+    #  "position": 0, "text": "..."}
     ...
 
 

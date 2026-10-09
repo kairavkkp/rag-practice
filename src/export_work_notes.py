@@ -198,13 +198,19 @@ class NoteHTML(HTMLParser):
             self.out.append("[image]")
 
     def handle_endtag(self, tag):
-        if tag in ("h1", "h2", "h3", "div", "p", "tr"):
+        if tag == "li" and self.out and self.out[-1] == "\n":
+            self.out.pop()  # Notes ends many items with <br>; it isn't a blank line
+        elif tag in ("h1", "h2", "h3", "div", "p", "tr"):
             self.out.append("\n")
         elif tag in ("ul", "ol"):
             self.list_depth -= 1
             self.out.append("\n")
 
     def handle_data(self, data):
+        # Whitespace with a newline is HTML source formatting between tags
+        # (e.g. "</li>\n<li>"), not note content; Notes marks real blank lines with <br>
+        if not data.strip() and "\n" in data:
+            return
         self.out.append(data)
 
 
@@ -213,11 +219,20 @@ def html_to_markdown(html, title):
     parser.feed(html or "")
     text = "".join(parser.out).replace("\xa0", " ")
     lines = [line.rstrip() for line in text.split("\n")]
-    # Apple puts the title as the first line of the body; drop it (we store it separately)
-    while lines and not lines[0].strip():
-        lines.pop(0)
-    if lines and lines[0].lstrip("# ").strip() == title.strip():
-        lines.pop(0)
+    # Apple puts the title as the first line of the body; drop it (we store it separately).
+    # Sometimes it is split over several <h1> tags: "# 202", "# 3-0", "# 2-1", "# 7".
+    want = title.replace(" ", "")
+    got, i = "", 0
+    while i < len(lines) and got != want:
+        piece = lines[i].strip().lstrip("#").replace(" ", "")
+        if piece and not want.startswith(got + piece):
+            break
+        got += piece
+        i += 1
+    if want and got == want:
+        while i < len(lines) and lines[i].strip() in ("", "#"):
+            i += 1
+        lines = lines[i:]
     text = "\n".join(lines)
     text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()

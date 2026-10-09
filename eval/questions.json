@@ -2,27 +2,145 @@
     {
         "id": 1,
         "category": "exact_match",
-        "question": "What did I change in the ProductEnrichmentRole IAM policy?",
-        "expected_answer": "Added s3:GetObject on the enrichment bucket so the Lambda could read input files.",
+        "question": "What was INVPLAT-1899?",
+        "expected_answer": "Add generation of the product hash in the Postgres DB, on Dev and Stg.",
         "sources": [
-            "2024-11-12.md"
+            "Work Notes/2023-02-17.md"
         ]
     },
     {
         "id": 2,
-        "category": "temporal",
-        "question": "What's the current sprint goal for ARCADE?",
-        "expected_answer": "Ship the bulk import API (set in the 2025-03-03 planning, replacing the earlier search revamp goal).",
+        "category": "exact_match",
+        "question": "Which PRs did I move to prod on 2024-06-05?",
+        "expected_answer": "PPD-1991, 1993, 1968, 1967 and 1965.",
         "sources": [
-            "2025-03-03.md",
-            "2025-01-20.md"
+            "Work Notes/2024-06-05.md"
         ]
     },
     {
         "id": 3,
+        "category": "exact_match",
+        "question": "What caused the prod bug on 2023-02-17?",
+        "expected_answer": "A mis-deployment of the Dashydash library.",
+        "sources": [
+            "Work Notes/2023-02-17.md"
+        ]
+    },
+    {
+        "id": 4,
+        "category": "paraphrase",
+        "question": "How did I make carrier and broker name matching better for JDF?",
+        "expected_answer": "Unified carrier and broker matching; candidate search favours records whose first word matches as well as the overall match, and names are cleaned of escape characters and extra spaces (helps names like C.H. Robinson).",
+        "sources": [
+            "Lighthouz AI/2025-08-10.md"
+        ]
+    },
+    {
+        "id": 5,
+        "category": "paraphrase",
+        "question": "Which document do we trust first when picking the load ID?",
+        "expected_answer": "Rate Con, then Invoice, then BoL. A Pro Number is used as the load ID; Customer Ref # is not added yet.",
+        "sources": [
+            "Lighthouz AI/2025-08-10.md"
+        ]
+    },
+    {
+        "id": 6,
+        "category": "paraphrase",
+        "question": "How does G2 decide whether a new customer is safe to factor?",
+        "expected_answer": "Credit score on the factors network must be 90 or above, and the broker authority (FMCSA) must be active for a year or more.",
+        "sources": [
+            "Lighthouz AI/2025-04-10_g2.md"
+        ]
+    },
+    {
+        "id": 7,
+        "category": "paraphrase",
+        "question": "What does the WinFactor webhook have to send back to them?",
+        "expected_answer": "Our MongoDB ID as load_id, plus warnings and errors arrays.",
+        "sources": [
+            "Lighthouz AI/2025-09-29.md"
+        ]
+    },
+    {
+        "id": 8,
+        "category": "temporal",
+        "question": "What's the status of PPD-1294?",
+        "expected_answer": "In Prod as of 2023-12-11. Earlier: base code done, testing pending (12-07), then code review (12-08).",
+        "sources": [
+            "Work Notes/2023-12-11.md",
+            "Work Notes/2023-12-08.md",
+            "Work Notes/2023-12-07.md"
+        ]
+    },
+    {
+        "id": 9,
+        "category": "temporal",
+        "question": "Did the 2024 GL Code changes reach production, and when?",
+        "expected_answer": "Yes, on 2024-08-26. Before that: model changes (08-13), CRUD APIs (08-14 to 08-16, code review), API enhancements on Stg (08-22).",
+        "sources": [
+            "Work Notes/2024-08-26.md",
+            "Work Notes/2024-08-22.md",
+            "Work Notes/2024-08-16.md",
+            "Work Notes/2024-08-14.md",
+            "Work Notes/2024-08-13.md"
+        ]
+    },
+    {
+        "id": 10,
+        "category": "multi_day",
+        "question": "How did the Load ID regex work evolve in late 2025?",
+        "expected_answer": "Oct 7: checked Parikh's fraud load ID regex. Nov 17: start with the JDF file and recalculate and store the regex when recent load IDs are present. Nov 24-27: update the logic to incorporate dumps (Costco prod examples).",
+        "sources": [
+            "Lighthouz AI/2025-10-07.md",
+            "Lighthouz AI/2025-11-17.md",
+            "Lighthouz AI/2025-11-24.md",
+            "Lighthouz AI/2025-11-25.md",
+            "Lighthouz AI/2025-11-27.md"
+        ]
+    },
+    {
+        "id": 11,
+        "category": "multi_day",
+        "question": "What did I work on with Dhruvi?",
+        "expected_answer": "Code reviews for Dhruvi, and a sync on S3, DynamoDB and Terraform module cleanup.",
+        "sources": [
+            "Work Notes/2023-01-12.md",
+            "Work Notes/2023-04-03.md",
+            "Work Notes/2023-12-07.md"
+        ]
+    },
+    {
+        "id": 12,
+        "category": "multi_day",
+        "question": "How did the Bland AI phone experiments go?",
+        "expected_answer": "Not well: a rate was processed incorrectly on a Bland AI call (2025-05-20), and the rate verification phone demo was not working as expected (2025-08-25).",
+        "sources": [
+            "Lighthouz AI/2025-05-20.md",
+            "Lighthouz AI/2025-08-25.md"
+        ]
+    },
+    {
+        "id": 13,
+        "category": "folder",
+        "question": "Which customers did I ping for feedback on the audit and import verification flow?",
+        "expected_answer": "Summar and JDF. Parikh and SF already had messages.",
+        "sources": [
+            "Lighthouz AI/2025-11-17.md"
+        ]
+    },
+    {
+        "id": 14,
         "category": "unanswerable",
-        "question": "What's our Kubernetes cluster version?",
-        "expected_answer": "I don't know. The notes don't mention it.",
+        "question": "How much does a Bland AI call cost per minute?",
+        "expected_answer": "I don't know. The notes mention Bland AI but not its pricing.",
+        "sources": []
+    },
+    {
+        "id": 15,
+        "category": "unanswerable",
+        "question": "Who is on the PagerDuty on-call rotation?",
+        "expected_answer": "I don't know. The notes don't mention PagerDuty or an on-call rotation.",
         "sources": []
     }
 ]
