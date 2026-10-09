@@ -17,7 +17,9 @@ work notes exported from Apple Notes. The goal is to understand every stage, not
 
 ## Environment
 
-- macOS 27. Python venv at the repo root; run things with `python` (venv active).
+- macOS 27. Python venv at the repo root; run things with `python` (venv active), always from
+  the repo root (paths like `data/...` are relative to it).
+- LLM: Ollama `qwen3.5:9b` at `localhost:11434` (M1 Pro, 16 GB).
 - Repo path: `~/Documents/repos/rag-practice`
 - Privacy: these are real work notes. Prefer local models (sentence-transformers, Ollama).
   Never commit `data/`. Don't print large amounts of note content into logs or commit messages.
@@ -32,7 +34,12 @@ data/                          git-ignored
   index/chunks.jsonl           built by src/build_chunks.py (derived, safe to delete)
   index/embeddings.npy         one vector per chunk, same order as chunks.jsonl
 src/build_chunks.py            loader + noise cleaner + token-based chunker
-eval/questions.json            my test questions (to be written)
+src/embed.py                   chunks.jsonl -> embeddings.npy
+src/search.py                  DenseIndex: cosine top-k (python src/search.py "query")
+src/answer.py                  retrieve -> whole notes -> Ollama answer with [n] citations
+eval/questions.json            15 test questions
+eval/run_eval.py               retrieval eval: hit@5, recall@5, rank (--name <run>)
+eval/results/<run>.json        saved eval runs (ids and scores only)
 ```
 
 Two folders, from two different jobs, so some answers depend on the folder:
@@ -117,8 +124,11 @@ Retrieval is the hard part; tune every stage separately.
    `sources` = list of `<folder>/<file>`.
 3. [x] `src/build_chunks.py`: `load_note` (reviewed), `split_blocks`, `chunk_note`, `main`.
    Check: every note has a chunk, no empty chunks, spot-read 3 random chunks.
-4. [ ] Embed chunks, cosine top-k retrieval, prompt with citations, answer.
-5. [ ] Baseline eval: retrieval hit rate (an expected source in the top 5).
+4. [x] Embed chunks, cosine top-k retrieval, prompt with citations, answer.
+5. [x] Baseline eval: retrieval hit rate (an expected source in the top 5).
+   `baseline-dense`: hit@5 9/13, mean recall@5 0.56. Misses: exact IDs (#1, #8), a name
+   (#11), one paraphrase (#5, rank 14). Unanswerable top scores (max 0.642) overlap answerable
+   hits (min 0.621), so a score threshold can't detect "no answer".
 6. [ ] Add one layer at a time, re-running the eval after each:
    - BM25 keyword search + reciprocal rank fusion (exact IDs and names)
    - citation / "I don't know" prompt (unanswerable questions)
