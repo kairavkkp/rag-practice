@@ -5,8 +5,8 @@ work notes exported from Apple Notes. The goal is to understand every stage, not
 
 ## How to work with me
 
-- **I write the code; you guide and review.** Point out what's wrong and why. Show a corrected
-  version of a specific function when asked, but don't write whole pipeline stages unless I ask.
+- **You write the code; I review it.** Write pipeline stages directly, keep them small and
+  readable, and explain non-obvious choices so I can review and learn from them.
 - **No RAG frameworks.** No LangChain, LlamaIndex, Haystack or vector DB clients. Plain Python and
   NumPy, plus the embedding model and the LLM. I implement cosine similarity, BM25, rank fusion,
   reranking, etc. myself.
@@ -31,7 +31,7 @@ data/                          git-ignored
   notes/<Folder>/*.md          one Markdown file per note  <- pipeline input
   index/chunks.jsonl           built by src/build_chunks.py (derived, safe to delete)
   index/embeddings.npy         one vector per chunk, same order as chunks.jsonl
-src/build_chunks.py            loader + chunker (in progress)
+src/build_chunks.py            loader + noise cleaner + token-based chunker
 eval/questions.json            my test questions (to be written)
 ```
 
@@ -82,18 +82,28 @@ date_source: title
 
 ## Pipeline decisions so far
 
-- **Chunking:** split at natural boundaries. A heading line starts a block, a blank line ends one,
-  consecutive list items stay together. Pack blocks into chunks of up to `MAX_WORDS = 250`.
-  Never split a block; an oversized block becomes its own chunk. Never merge across notes:
-  each chunk comes from one note and one date.
+- **Chunking:** sized in **tokens** (bge tokenizer), not words: these notes average ~1.8
+  tokens/word and IDs/code go much higher. Unit = a top-level line plus the indented lines
+  under it (one task with its sub-items). Pack units in order up to `CHUNK_TOKENS = 200`
+  (header included); a unit over budget is split between its lines. Never merge across notes:
+  each chunk comes from one note and one date. Nothing may exceed 512 tokens (silent truncation).
+- **Embed clean, keep raw:** ~23% of tokens are machine noise (UUIDs, base64, JSON, REPL
+  output, pasted HTML). `embed_text` replaces noise runs with `[N lines of IDs/data]` and long
+  strings with `[id]`; short ticket IDs (INVPLAT-1899) are kept. `text` stays raw for BM25 and
+  the prompt.
+- **Embed small, return big:** retrieve chunks; give the LLM the whole raw note (median ~130
+  tokens), or the chunk plus neighbours for very large notes. BM25 runs over raw chunk `text`
+  so it ranks the same units as vector search and the two can be fused.
 - **Chunk record:**
   `{"chunk_id": "<folder>/<file>#<position>", "file": "<folder>/<file>", "folder", "title",
-  "date", "position", "text"}`
+  "date", "position", "text", "embed_text", "n_tokens"}`
 - **Embedding model:** `BAAI/bge-small-en-v1.5` (512-token limit fits 250-word chunks plus header).
   Don't use `all-MiniLM-L6-v2` with 250-word chunks: it silently truncates at ~190 words.
 - **Context header:** at embed time and in the prompt, prefix each chunk with
   `Date: <date> | Folder: <folder> | Note: <title>`.
-- **Storage:** brute-force cosine similarity over a NumPy array (~700 chunks). No vector DB.
+- **Storage:** brute-force cosine similarity over a NumPy array (~900 chunks). No vector DB.
+  Parked idea: Postgres + pgvector, only if we outgrow files (100k+ chunks, several users,
+  concurrent writes, or SQL-heavy metadata filtering). Not needed at this size.
 
 ## Roadmap
 
@@ -105,7 +115,7 @@ Retrieval is the hard part; tune every stage separately.
 2. [ ] Write `eval/questions.json`: 10-15 questions across exact-match IDs, paraphrased wording,
    facts that changed over time, answers spread across days, and unanswerable.
    `sources` = list of `<folder>/<file>`.
-3. [ ] `src/build_chunks.py`: `load_note` (reviewed), `split_blocks`, `chunk_note`, `main`.
+3. [x] `src/build_chunks.py`: `load_note` (reviewed), `split_blocks`, `chunk_note`, `main`.
    Check: every note has a chunk, no empty chunks, spot-read 3 random chunks.
 4. [ ] Embed chunks, cosine top-k retrieval, prompt with citations, answer.
 5. [ ] Baseline eval: retrieval hit rate (an expected source in the top 5).
