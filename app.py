@@ -22,6 +22,21 @@ MODES = {
 }
 FOLDERS = ["All", "Work Notes", "Lighthouz AI"]
 
+# Demo questions from eval/questions.json, labelled with what each one shows
+SAMPLES = [
+    ("Exact ticket ID", "What was INVPLAT-1899?"),
+    ("Changed over time", "What's the status of PPD-1294?"),
+    ("Paraphrased", "How does G2 decide whether a new customer is safe to factor?"),
+    ("Spread across days", "How did the Load ID regex work evolve in late 2025?"),
+    ("Date in the question", "Which PRs did I move to prod on 2024-06-05?"),
+    ("Not in the notes", "Who is on the PagerDuty on-call rotation?"),
+]
+
+
+def use_sample(question):
+    st.session_state.question = question
+    st.session_state.auto_ask = True
+
 
 @st.cache_resource(show_spinner="Loading models...")
 def load_indexes():
@@ -43,11 +58,19 @@ indexes = load_indexes()
 index = indexes[mode]
 chunks_by_id = {c["chunk_id"]: c for c in indexes["dense"].chunks}
 
+st.caption("Try a sample question (each shows a different retrieval challenge):")
+cols = st.columns(3)
+for i, (label, sample) in enumerate(SAMPLES):
+    cols[i % 3].button(
+        label, help=sample, on_click=use_sample, args=(sample,), use_container_width=True
+    )
+
 with st.form("ask"):
-    question = st.text_input("Question", placeholder="What's the status of PPD-1294?")
+    question = st.text_input("Question", key="question", placeholder="Ask anything about the notes")
     submitted = st.form_submit_button("Ask")
 
-if submitted and question.strip():
+# A sample click fills the box and asks right away
+if (submitted or st.session_state.pop("auto_ask", False)) and question.strip():
     if retrieval_only:
         results = index.search(question, k=K, folder=folder)
         retrieved = [{"chunk_id": c["chunk_id"], "score": s} for s, c in results]
