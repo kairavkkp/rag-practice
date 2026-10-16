@@ -168,8 +168,8 @@ def chunk_note(note):
 def main():
     # for each note: load -> split into units -> chunk
     # write one JSON line per chunk to OUT:
-    # {"chunk_id": "Work Notes/2024-03-18.md#0", "file": "Work Notes/2024-03-18.md",
-    #  "folder": "Work Notes", "title": "2024-03-18", "date": "2024-03-18",
+    # {"chunk_id": "Work/2024-03-18.md#0", "file": "Work/2024-03-18.md",
+    #  "folder": "Work", "title": "2024-03-18", "date": "2024-03-18",
     #  "position": 0, "text": "<raw>", "embed_text": "<cleaned>", "n_tokens": 87}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     n_notes, tokens = 0, []

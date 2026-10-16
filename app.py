@@ -20,8 +20,6 @@ MODES = {
     "bm25": "keyword match: exact IDs, names, dates",
     "dense": "embedding similarity: meaning, paraphrases",
 }
-FOLDERS = ["All", "Work Notes", "Lighthouz AI"]
-
 # Demo questions from eval/questions.json, labelled with what each one shows
 SAMPLES = [
     ("Exact ticket ID", "What was INVPLAT-1899?"),
@@ -48,15 +46,18 @@ def load_indexes():
 st.set_page_config(page_title="Notes RAG", layout="wide")
 st.title("Ask my work notes")
 
+indexes = load_indexes()
+chunks_by_id = {c["chunk_id"]: c for c in indexes["dense"].chunks}
+# Folders come from the indexed notes, so no folder names live in the code
+folders = sorted({c["folder"] for c in chunks_by_id.values()})
+
 with st.sidebar:
     mode = st.radio("Retrieval", list(MODES), format_func=lambda m: f"{m}: {MODES[m]}")
-    folder = st.selectbox("Folder", FOLDERS)
+    folder = st.selectbox("Folder", ["All"] + folders)
     folder = None if folder == "All" else folder
     retrieval_only = st.checkbox("Retrieval only (skip the LLM)", help="Fast; for comparing modes")
 
-indexes = load_indexes()
 index = indexes[mode]
-chunks_by_id = {c["chunk_id"]: c for c in indexes["dense"].chunks}
 
 st.caption("Try a sample question (each shows a different retrieval challenge):")
 cols = st.columns(3)

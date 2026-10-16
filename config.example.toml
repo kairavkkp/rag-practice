@@ -1,0 +1,9 @@
+# Copy to config.toml (git-ignored) and set your own values:
+#   cp config.example.toml config.toml
+
+[notes]
+# Apple Notes folders to export (exact names, case-sensitive)
+folders = ["Work", "Side Projects"]
+
+# Notes to leave out, by exact title (e.g. notes containing keys or personal notes)
+exclude_titles = ["API keys"]

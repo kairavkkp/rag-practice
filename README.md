@@ -50,6 +50,7 @@ Requires macOS (for the Notes exporter), Python (built with 3.14) and [Ollama](h
 ```bash
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
+cp config.example.toml config.toml   # then set your Apple Notes folder names
 ollama pull qwen3.5:9b
 
 # 1. Export notes (reads Apple Notes; resumes if interrupted)
@@ -61,7 +62,7 @@ python src/embed.py            # chunks -> data/index/embeddings.npy
 
 # 3. Ask questions
 streamlit run app.py           # UI at http://localhost:8501
-python src/answer.py "What's the status of <ticket>?" --folder "Work Notes"
+python src/answer.py "What's the status of <ticket>?" --folder "<folder name>"
 
 # 4. Evaluate retrieval
 python eval/run_eval.py --mode rerank --name my-run

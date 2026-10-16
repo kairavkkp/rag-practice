@@ -1,7 +1,7 @@
 """Answer a question from the notes with a local LLM (Ollama), citing sources.
 
-    python src/answer.py "What's the status of PPD-1294?"
-    python src/answer.py "What did I fix in the audit lambda?" --folder "Lighthouz AI"
+    python src/answer.py "What's the status of <ticket>?"
+    python src/answer.py "What did I fix in the audit lambda?" --folder "<folder name>"
 
 Embed small, return big: retrieve chunks, then give the LLM each matched note in full.
 """
@@ -90,7 +90,7 @@ def answer(question, index, folder=None):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("question", nargs="+")
-    ap.add_argument("--folder", help='only search one folder, e.g. "Work Notes"')
+    ap.add_argument("--folder", help="only search one folder (a folder name from config.toml)")
     args = ap.parse_args()
     result = answer(" ".join(args.question), RerankIndex(), args.folder)
     print(result["answer"] + "\n")

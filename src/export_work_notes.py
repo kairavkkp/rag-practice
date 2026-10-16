@@ -15,9 +15,9 @@ Output:
   data/notes/<Folder>/*.md       one Markdown file per note
 
 Usage:
-  python3 export_notes.py            # export all folders (resumes where it left off)
-  python3 export_notes.py --rebuild  # rebuild the .md files from the backups, no Notes app
-  python3 export_notes.py --fresh    # forget earlier progress and read everything again
+  python src/export_work_notes.py            # export all folders (resumes where it left off)
+  python src/export_work_notes.py --rebuild  # rebuild the .md files from the backups, no Notes app
+  python src/export_work_notes.py --fresh    # forget earlier progress and read everything again
 
 Each batch is saved as soon as it is read. If a run is interrupted, the next run
 skips notes that are already saved and carries on.
@@ -36,13 +36,12 @@ from datetime import datetime
 from html.parser import HTMLParser
 from pathlib import Path
 
-# Notes folders to export (exact names, case-sensitive)
-FOLDERS = ["Work Notes", "Lighthouz AI"]
+from config import load_config
 
-# Notes to leave out, by exact title (e.g. notes containing keys or personal notes)
-EXCLUDE_TITLES = [
-    "Dashydash OpenAI keys",
-]
+# Folders to export and titles to skip come from config.toml (git-ignored, personal)
+_config = load_config()["notes"]
+FOLDERS = _config["folders"]  # exact Notes folder names, case-sensitive
+EXCLUDE_TITLES = _config.get("exclude_titles", [])  # e.g. notes containing keys
 
 # ---------------------------------------------------------------------------
 # 1. Talk to the Notes app (AppleScript, run through osascript)
@@ -383,7 +382,7 @@ def migrate_old_layout(out):
         return
     by_folder = {}
     for n in read_raw(legacy):
-        by_folder.setdefault(n.get("folder", "Work Notes"), []).append(n)
+        by_folder.setdefault(n.get("folder", FOLDERS[0]), []).append(n)
     for folder, notes in by_folder.items():
         with (out / "raw" / f"{safe_name(folder)}.jsonl").open(
             "a", encoding="utf-8"
