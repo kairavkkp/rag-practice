@@ -78,7 +78,7 @@
     <div class="flow">
       <div class="step"><b>Notes</b><span>636 notes<br>exported</span></div>
       <div class="arrow">→</div>
-      <div class="step"><b>Chunks</b><span>~200 tokens,<br>clean + raw copy</span></div>
+      <div class="step"><b>Chunks</b><span>up to 200 tokens,<br>clean + raw copy</span></div>
       <div class="arrow">→</div>
       <div class="stack">
         <div class="step"><b>Meaning search</b><span>embeddings</span></div>
@@ -95,7 +95,7 @@
 
   <section>
     <div class="chart-title">Questions where a correct note made the top 5</div>
-    <div class="chart-note">13 answerable test questions · higher is better</div>
+    <div class="chart-note">13 answerable questions I wrote · a small set, so read it as directional</div>
     <div class="bars">
       <div class="label">Meaning search only</div>
       <div class="track"><div class="bar" style="width:calc(9/13*86%)"></div><div class="val" style="left:calc(9/13*86%)">9 <small>/ 13</small></div></div>
@@ -114,7 +114,7 @@
       <ul>
         <li>Measure chunks in <b>tokens</b>, not words. <em>IDs and code turned one 498-word chunk into 4,363 tokens.</em></li>
         <li>Meaning search misses exact IDs; keyword search misses rephrasing. <em>Each failed different questions.</em></li>
-        <li>Merging the two made results <b>worse</b> at first. <em>The reranker is what fixed it.</em></li>
+        <li>Merging the two did <b>worse</b> than keyword search alone. <em>The reranker is what fixed it.</em></li>
         <li>No score threshold could tell answerable from unanswerable. <em>"I don't know" has to come from the prompt.</em></li>
       </ul>
     </div>
@@ -131,7 +131,7 @@
 
   <footer>
     <span><b>Kairav Pithadia</b> · github.com/kairavkkp/rag-practice</span>
-    <span>All local · bge-small · bge-reranker · qwen3.5 · no frameworks</span>
+    <span>All local · bge-small · bge-reranker · qwen3.5 · no RAG frameworks</span>
   </footer>
 </body>
 </html>
