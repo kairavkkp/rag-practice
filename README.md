@@ -1,9 +1,10 @@
 # rag-practice
 
-A retrieval-augmented generation (RAG) pipeline built **by hand** over my own work notes,
-to learn how each stage works. No RAG frameworks or vector databases: plain Python and
-NumPy, a local embedding model, a local reranker and a local LLM. BM25, cosine similarity,
-rank fusion and the chunker are all written from scratch.
+A learning exercise: a retrieval-augmented generation (RAG) pipeline over my own work notes,
+built step by step with an AI coding assistant to understand how each stage works. No RAG
+frameworks or vector databases, so nothing is hidden: plain Python and NumPy, a local
+embedding model, a local reranker and a local LLM. BM25, cosine similarity, rank fusion and
+the chunker are each a few dozen readable lines.
 
 The goal is understanding, not a leaderboard score. Every stage is added on its own and
 measured against a small eval set, so you can see what each technique fixes and where it fails.
@@ -79,7 +80,7 @@ telemetry turned off.
 | **Chunking** | Groups each top-level bullet with its sub-items, packs them to ~200 tokens | Size in **tokens**, not words: these notes average ~1.8 tokens/word, and IDs or code go far higher. A 498-word chunk was 4,363 tokens. |
 | **Embed clean, keep raw** | Each chunk stores `text` (raw) and `embed_text` (cleaned) | 23% of tokens were machine noise (UUIDs, base64, JSON, pasted HTML). That noise is collapsed to `[N lines of IDs/data]` for the vector, but kept for keyword search and the LLM. |
 | **Dense search** | `BAAI/bge-small-en-v1.5`, brute-force cosine in NumPy | ~900 chunks: a matrix-vector product is under a millisecond. No vector DB needed. |
-| **BM25** | Hand-written keyword ranking over raw text + header | Tokenizer keeps IDs like `ABC-1234` whole and also indexes their parts. Query stopwords are required (see lessons). |
+| **BM25** | Keyword ranking in plain Python over raw text + header | Tokenizer keeps IDs like `ABC-1234` whole and also indexes their parts. Query stopwords are required (see lessons). |
 | **Fusion** | Reciprocal rank fusion of the dense and BM25 lists | Uses ranks, not scores, because cosine and BM25 scores aren't comparable. |
 | **Reranking** | `BAAI/bge-reranker-base` re-scores the 20 fused candidates, keeps 5 | Reads question and chunk *together*, so it judges relevance much better than either retriever. |
 | **Answer** | Whole notes → `qwen3.5:9b` via Ollama's HTTP API | Must cite `[n]` after every fact, prefer newer notes, and reply "I don't know" when the notes don't cover it. |
@@ -88,7 +89,7 @@ telemetry turned off.
 
 ## Results
 
-Retrieval eval on 15 hand-written questions (13 answerable, 2 unanswerable) covering exact IDs,
+Retrieval eval on 15 questions (13 answerable, 2 unanswerable) covering exact IDs,
 paraphrases, facts that changed over time, answers spread across days, and folder-specific
 questions. **hit@5** = an expected note is in the top 5; **recall@5** = share of expected
 notes in the top 5.
@@ -127,7 +128,7 @@ not as a benchmark.
 src/export_work_notes.py   Apple Notes -> Markdown (AppleScript)
 src/build_chunks.py        loader, noise cleaner, token-based chunker
 src/embed.py               chunks -> embeddings.npy
-src/bm25.py                BM25 index (hand-written)
+src/bm25.py                BM25 index (plain Python)
 src/search.py              DenseIndex, HybridIndex (RRF), RerankIndex
 src/answer.py              retrieve -> whole notes -> LLM with citations; logging
 app.py                     Streamlit UI with sample questions
@@ -154,7 +155,7 @@ data/                      git-ignored: notes, index, logs
 - [ ] **Query rewrite / HyDE / multi-query:** rephrase or expand the question with the LLM
   before searching, for paraphrased questions. Costs an extra LLM call each time.
 - [ ] **Answer-level eval:** score answers, not just retrieval, against the expected answers,
-  first by hand and then with an LLM judge.
+  first manually, then with an LLM judge.
 - [ ] **BM25 refinements:** stemming, and measuring chunk length on the cleaned text.
 - [ ] **Router and compression:** last, and probably unnecessary at this size.
 - [ ] **Postgres + pgvector:** only if this outgrows files (100k+ chunks, several users).

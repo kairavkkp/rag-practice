@@ -1,6 +1,6 @@
 # rag-practice
 
-A learning project: build a RAG (retrieval-augmented generation) pipeline **by hand** over my own
+A learning project: build a RAG (retrieval-augmented generation) pipeline step by step over my own
 work notes exported from Apple Notes. The goal is to understand every stage, not to ship fast.
 
 ## How to work with me
@@ -8,8 +8,10 @@ work notes exported from Apple Notes. The goal is to understand every stage, not
 - **You write the code; I review it.** Write pipeline stages directly, keep them small and
   readable, and explain non-obvious choices so I can review and learn from them.
 - **No RAG frameworks.** No LangChain, LlamaIndex, Haystack or vector DB clients. Plain Python and
-  NumPy, plus the embedding model and the LLM. I implement cosine similarity, BM25, rank fusion,
-  reranking, etc. myself.
+  NumPy, plus the embedding model and the LLM. Cosine similarity, BM25, rank fusion, reranking,
+  etc. are implemented in this repo so every stage stays visible.
+- **Framing:** this is a learning exercise built with AI help. Don't describe it as hand-written
+  or "from scratch" (README, posts, commit messages).
 - **Every time you change a file, give me** a git-log-style entry (conventional commit subject +
   bullet points). No diff needed.
 - Keep explanations short and concrete. Run code to check claims where possible.
@@ -37,7 +39,7 @@ data/                          git-ignored
   index/embeddings.npy         one vector per chunk, same order as chunks.jsonl
 src/build_chunks.py            loader + noise cleaner + token-based chunker
 src/embed.py                   chunks.jsonl -> embeddings.npy
-src/bm25.py                    BM25Index: hand-written BM25 over raw text + header
+src/bm25.py                    BM25Index: plain-Python BM25 over raw text + header
 src/search.py                  DenseIndex, HybridIndex (RRF), RerankIndex (cross-encoder)
 src/answer.py                  rerank -> whole notes -> Ollama answer with [n] citations
                                (--folder to filter; logs to data/logs/queries.jsonl)
@@ -152,7 +154,7 @@ Retrieval is the hard part; tune every stage separately.
      off against relevance: boost newer notes, or sort context by date for "status/latest".
    - [ ] TODO query rewrite, HyDE, multi-query (paraphrased questions). Each costs an LLM
      call (~5-15 s with qwen), so measure the gain against the latency.
-   - [ ] TODO answer-level eval: score answers against `expected_answer` (by hand first,
+   - [ ] TODO answer-level eval: score answers against `expected_answer` (manually first,
      then an LLM judge). Known case: #13 answered "Summar and JDF - Parikh" from an ambiguous
      note line; retrieval was right, the reading was wrong.
    - [ ] TODO BM25 leftovers: a simple stemmer (names/name), and measure doc length on
