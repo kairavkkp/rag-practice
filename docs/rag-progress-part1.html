@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RAG learning log</title>
+<style>
+  :root {
+    --surface: #fcfcfb;
+    --card: #f3f2ef;
+    --line: #dddcd7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #77766f;
+    --accent: #2a78d6;      /* series slot 1 */
+    --muted-bar: #b9b8b1;
+    --accent-soft: #e6effa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1350px; background: var(--surface); }
+  body {
+    font-family: -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-primary);
+    padding: 64px 68px 52px;
+    display: flex; flex-direction: column; gap: 40px;
+  }
+  .eyebrow { font-size: 19px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  h1 { font-size: 50px; line-height: 1.08; letter-spacing: -.02em; margin-top: 12px; font-weight: 750; }
+  .sub { font-size: 22px; color: var(--text-secondary); margin-top: 14px; line-height: 1.4; }
+  h2 { font-size: 17px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 16px; }
+
+  /* Pipeline */
+  .flow { display: flex; align-items: stretch; gap: 0; }
+  .step { flex: 1; background: var(--card); border-radius: 12px; padding: 14px 12px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+  .step b { display: block; font-size: 18px; line-height: 1.2; }
+  .step span { display: block; font-size: 14.5px; color: var(--text-secondary); margin-top: 6px; line-height: 1.3; }
+  .step.key { background: var(--accent-soft); outline: 2px solid var(--accent); outline-offset: -2px; }
+  .arrow { width: 26px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 20px; flex: none; }
+  .stack { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .stack .step { flex: 1; }
+
+  /* Chart */
+  .chart-title { font-size: 22px; font-weight: 650; }
+  .chart-note { font-size: 16px; color: var(--text-muted); margin-top: 4px; }
+  .bars { margin-top: 20px; display: grid; grid-template-columns: 250px 1fr; row-gap: 14px; column-gap: 18px; align-items: center; }
+  .label { font-size: 19px; color: var(--text-secondary); text-align: right; }
+  .label.key { color: var(--text-primary); font-weight: 650; }
+  .track { position: relative; height: 34px; border-left: 2px solid var(--line); }
+  .bar { height: 100%; border-radius: 0 4px 4px 0; background: var(--muted-bar); }
+  .bar.key { background: var(--accent); }
+  .val { position: absolute; top: 50%; transform: translateY(-50%); font-size: 19px; font-weight: 650; padding-left: 10px; color: var(--text-primary); white-space: nowrap; }
+  .val small { font-weight: 400; color: var(--text-muted); font-size: 16px; }
+
+  /* Lessons + next */
+  .cols { display: grid; grid-template-columns: 1.15fr 1fr; gap: 28px; }
+  ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  li { font-size: 18.5px; line-height: 1.38; padding-left: 22px; position: relative; color: var(--text-primary); }
+  li::before { content: ""; position: absolute; left: 0; top: 10px; width: 8px; height: 8px; border-radius: 2px; background: var(--accent); }
+  .next li::before { background: transparent; border: 2px solid var(--text-muted); width: 6px; height: 6px; }
+  li em { font-style: normal; color: var(--text-secondary); }
+
+  .byline { font-size: 19px; color: var(--text-secondary); margin-top: 16px; }
+  .byline b { color: var(--text-primary); font-weight: 650; }
+  .byline .dot { color: var(--text-muted); margin: 0 6px; }
+  footer { margin-top: auto; border-top: 1px solid var(--line); padding-top: 18px; display: flex; justify-content: space-between; font-size: 16px; color: var(--text-muted); }
+  footer b { color: var(--text-secondary); font-weight: 600; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">Learning log · Part 1</div>
+    <h1>What each piece of a RAG pipeline actually fixed</h1>
+    <p class="sub">Searching ~600 of my own work notes with local models, adding one technique at a time and measuring each.</p>
+    <p class="byline">By <b>Kairav Pithadia</b><span class="dot">·</span>Built with an AI coding assistant</p>
+  </header>
+
+  <section>
+    <h2>The pipeline so far</h2>
+    <div class="flow">
+      <div class="step"><b>Notes</b><span>636 notes<br>exported</span></div>
+      <div class="arrow">→</div>
+      <div class="step"><b>Chunks</b><span>~200 tokens,<br>clean + raw copy</span></div>
+      <div class="arrow">→</div>
+      <div class="stack">
+        <div class="step"><b>Meaning search</b><span>embeddings</span></div>
+        <div class="step"><b>Keyword search</b><span>BM25</span></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step"><b>Merge</b><span>rank fusion,<br>top 20</span></div>
+      <div class="arrow">→</div>
+      <div class="step key"><b>Reranker</b><span>reads question<br>+ chunk, keeps 5</span></div>
+      <div class="arrow">→</div>
+      <div class="step"><b>Local LLM</b><span>cited answer or<br>"I don't know"</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="chart-title">Questions where a correct note made the top 5</div>
+    <div class="chart-note">13 answerable test questions · higher is better</div>
+    <div class="bars">
+      <div class="label">Meaning search only</div>
+      <div class="track"><div class="bar" style="width:calc(9/13*86%)"></div><div class="val" style="left:calc(9/13*86%)">9 <small>/ 13</small></div></div>
+      <div class="label">Keyword search only</div>
+      <div class="track"><div class="bar" style="width:calc(11/13*86%)"></div><div class="val" style="left:calc(11/13*86%)">11 <small>/ 13</small></div></div>
+      <div class="label">Both, merged</div>
+      <div class="track"><div class="bar" style="width:calc(10/13*86%)"></div><div class="val" style="left:calc(10/13*86%)">10 <small>/ 13</small></div></div>
+      <div class="label key">Both + reranker</div>
+      <div class="track"><div class="bar key" style="width:86%"></div><div class="val" style="left:86%">13 <small>/ 13</small></div></div>
+    </div>
+  </section>
+
+  <section class="cols">
+    <div>
+      <h2>What I learned</h2>
+      <ul>
+        <li>Measure chunks in <b>tokens</b>, not words. <em>IDs and code turned one 498-word chunk into 4,363 tokens.</em></li>
+        <li>Meaning search misses exact IDs; keyword search misses rephrasing. <em>Each failed different questions.</em></li>
+        <li>Merging the two made results <b>worse</b> at first. <em>The reranker is what fixed it.</em></li>
+        <li>No score threshold could tell answerable from unanswerable. <em>"I don't know" has to come from the prompt.</em></li>
+      </ul>
+    </div>
+    <div class="next">
+      <h2>Coming next</h2>
+      <ul>
+        <li>Date awareness: prefer the newest note when facts change</li>
+        <li>Query rewriting and HyDE for loosely worded questions</li>
+        <li>Grading the answers, not just the retrieval</li>
+        <li>Re-running everything on a different, public dataset</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <span><b>Kairav Pithadia</b> · github.com/kairavkkp/rag-practice</span>
+    <span>All local · bge-small · bge-reranker · qwen3.5 · no frameworks</span>
+  </footer>
+</body>
+</html>
